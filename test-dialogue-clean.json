@@ -1,0 +1,28 @@
+{ 
+	"dialogues": [
+		{
+		    "text": "*Yawn* Long day of poking around all these boxes. Time for some noms and a nap.",
+		    "character": "Truffle",
+		    "responses": [
+		        {
+		            "text": "What's up?",
+		            "response": {
+		                "text": "Not much.",
+		                "character": "Truffle",
+		                "responses": [
+		                    {
+		                        "text": "Ok, bye."
+		                    }, {
+		                    	"text": "Restart.",
+		                    	"response": "#REF,0"
+		                    }
+		                ]
+		            }
+		        }, {
+		            "text": "Go To Not Much Text.",
+		            "response": "#REF,0,0"
+		        }
+		    ]
+		}
+	]
+}
