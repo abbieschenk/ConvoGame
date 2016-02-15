@@ -3,7 +3,6 @@ var dialogueRoot;
 var idCounter = 0;
 
 function buildRecursiveAddToBody(dialogue) {
-    
     var startpointOptions = { 
         isSource:true, 
         endpoint: ["Dot", {radius:7}], 
@@ -23,14 +22,19 @@ function buildRecursiveAddToBody(dialogue) {
     
     var node = $("<div/>", {
         class: "dialogue-node",
-        // TODO: this is wrong, need to read + write
-        id: "dialogue-node-" + idCounter++,
+        id: "dialogue-node-" + dialogue.id,
         style: "left: " + dialogue.x + "px; top: " + dialogue.y + "px",
     }).appendTo("#convo-editor");
     
     node.text(dialogue.text);
     
-    jsPlumb.draggable(node);
+    jsPlumb.draggable(node, {
+        stop: function(event, ui) {
+            // Write to dialogue.
+            dialogue.x = node.position().left;
+            dialogue.y = node.position().top;
+        }
+    });
     
     setTimeout(function() {
         var startpoint = jsPlumb.addEndpoint(node, { anchor: "BottomCenter"}, startpointOptions);
@@ -51,10 +55,23 @@ function buildRecursiveAddToBody(dialogue) {
 
 $(function() {
     $.getJSON("test-dialogue.json", function( data ) {
-        dialogueRoot = data.dialogues;
+        dialogueRoot = data;
         
-         $.each(dialogueRoot, function(key, value) {
+         $.each(dialogueRoot.dialogues, function(key, value) {
              buildRecursiveAddToBody(value);
          }); 
+    });
+    
+    $("#export-json").click(function() {
+//        var dialogueExport = {
+//            dialogues: dialogueRoot
+//        };
+//        
+        $("<a />", {
+            "download": "data.json",
+            "href" : "data:application/json," + encodeURIComponent(JSON.stringify(dialogueRoot, null, 2))
+        }).appendTo("body").click(function() {
+             $(this).remove()
+        })[0].click()
     });
 });
