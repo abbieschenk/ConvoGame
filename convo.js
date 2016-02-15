@@ -2,24 +2,26 @@
 var dialogueRoot;
 var idCounter = 0;
 
+var dialogueNodes = [];
+
+var startpointOptions = {
+    isSource:true,
+    endpoint: ["Dot", {radius:7}],
+    connector: ["Flowchart"],
+    connectorStyle: {
+        strokeStyle: "black",
+        lineWidth: 3,
+    }, paintStyle: {
+        fillStyle:"black"
+    }, maxConnections: 999999
+};
+
+var endpointOptions = Object.create(startpointOptions);
+
+endpointOptions.isSource = false;
+endpointOptions.isTarget = true;
+
 function buildRecursiveAddToBody(dialogue) {
-    var startpointOptions = {
-        isSource:true,
-        endpoint: ["Dot", {radius:7}],
-        connector: ["Flowchart"],
-        connectorStyle: {
-            strokeStyle: "black",
-            lineWidth: 3,
-        }, paintStyle: {
-            fillStyle:"black"
-        }, maxConnections: 999999
-    };
-
-    var endpointOptions = Object.create(startpointOptions);
-
-    endpointOptions.isSource = false;
-    endpointOptions.isTarget = true;
-
     var node = $("<div/>", {
         class: "dialogue-node",
         id: "dialogue-node-" + dialogue.id,
@@ -27,12 +29,13 @@ function buildRecursiveAddToBody(dialogue) {
     }).appendTo("#convo-editor");
 
     node.text(dialogue.text);
+    node.dialogue = dialogue;
 
     jsPlumb.draggable(node, {
         stop: function(event, ui) {
             // Write to dialogue.
-            dialogue.x = node.position().left;
-            dialogue.y = node.position().top;
+            node.dialogue.x = node.position().left;
+            node.dialogue.y = node.position().top;
         }
     });
 
@@ -52,11 +55,19 @@ function buildRecursiveAddToBody(dialogue) {
         });
     });
 
+    if(!dialogue.responses) {
+        dialogue.responses = [];
+    }
+
+    dialogueNodes[node.attr("id")] = node;
+
     return node;
 }
 
 
 $(function() {
+    // TODO Arrows?
+    //
     // jsPlumb.Defaults.Overlays = [
     //     [ "Arrow", {
     //         location:1,
@@ -78,6 +89,30 @@ $(function() {
              buildRecursiveAddToBody(value);
          });
     });
+
+
+    jsPlumb.bind("connection", function(info, originalEvent) {
+        if(!originalEvent) return;
+
+        var sourceNode = dialogueNodes[info.sourceId];
+        var targetNode = dialogueNodes[info.targetId];
+
+        var alreadyConnected = false;
+
+        $.each(sourceNode.dialogue.responses, function(key, value) {
+            if(value.id === info.targetId) {
+                alreadyConnected = true;
+                console.warn("Warning: Tried to connect " + info.sourceId + " to " + info.targetId + " but connection already exists.");
+                return;
+            }
+        });
+
+        if(!alreadyConnected) {
+            sourceNode.dialogue.responses.push(targetNode.dialogue);
+        }
+    });
+
+    // TODO Disconnection!
 
     $("#export-json").click(function() {
         $("<a />", {
