@@ -5,131 +5,23 @@ $border-color: #f3f5f6;
 $text-background: rgba(255, 255, 255, 0.8);
 $notify-background: rgba(0, 200, 0, 0.6);
 
-$item-width: 300px;
-$item-height: 180px;
-
-$border: 5px solid $border-color;
-
-@mixin font {
-    font-family: $font;
-    color: $font-color;
+body {
+    background-color: #D7D7D7;
 }
 
-@mixin center {
-    margin-left: auto;
-    margin-right: auto;
+.dialogue-node {
+    border: 3px solid black;
+    padding: 5px;
+    width: 125px;
+    position:absolute;
+//    cursor: move;
+//    cursor: -webkit-grabbing;
+//    cursor: -moz-grabbing;
 }
 
-.item-bar {
-    @include center;
-    width: 75%;
-}
-
-a.item {
-    @include font;
-    
-    width: $item-width;
-    height: $item-height;
-    
-    float: left;
-    position: relative;
-    
-    overflow: hidden;
-
-    text-decoration: none;
-    cursor: pointer;
-    
-    border: $border;
-    
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    
-    &:hover > .price-box {
-        @keyframes price-anim {
-            0% {
-                font-size: 1.0em;
-            }
-            50% {
-                font-size: 1.5em;    
-            }
-            100% {
-                font-size: 1.0em;   
-            }
-        }
-        
-        animation: price-anim;
-        animation-duration: 1s;
-    }
-    
-    .title {
-         @keyframes title-anim {
-            0% {
-                top: -20%;
-            }
-
-            100% {
-                top: 0%;
-            }
-        }
-        
-        position: relative;
-        
-        text-align: center;
-        text-overflow: ellipsis;
-        font-weight: 700;
-        padding: 5px 0px;
-        
-        width: 100%;
-        
-        overflow: hidden;
-        white-space: nowrap;
-        
-        background-color: $text-background;
-        
-        animation-name: title-anim;
-        animation-duration: 1s;
-    }
-    
-    .message {
-        @keyframes message-anim {
-            0% {
-                color: $notify-background;
-                left:-30%;
-            }
-            100% {
-                color: white;
-                left: 0%;
-            }
-        }
-        
-        position:relative;
-        
-        background-color: $notify-background;
-        color: white;
-        width: 25%;
-        padding: 5px;
-        
-        animation-name: message-anim;
-        animation-duration: 1s;
-    }
-    
-    .price-box {
-        text-align: center;
-        position: absolute;
-        bottom: 0;
-        
-        width: 100%;
-        
-        background-color: $text-background;
-        
-        .old-price {
-            text-decoration: line-through;
-            margin-right: 10px;
-        }
-        
-        .sale {
-            color: red;
-        }
-    }
+#convo-editor {
+    left: 500px;
+    width: 500px;
+    height: 500px;
+    background-color: white;
 }
