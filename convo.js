@@ -170,8 +170,9 @@ $(function() {
         var targetNode = dialogueNodes[info.targetId];
 
         sourceNode.dialogue.responses.splice(sourceNode.dialogue.responses.indexOf(targetNode.dialogue), 1);
+
+        // TODO need warning if node will not be exported, i.e. has no parents
     });
-    // TODO Disconnection!
 
     $("#export-json").click(function() {
         var dialogueExport = jQuery.extend(true, {}, dialogueRoot);
