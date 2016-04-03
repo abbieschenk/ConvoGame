@@ -4,6 +4,13 @@ var idCounter = 0;
 
 var dialogueNodes = [];
 
+function inArray(array, value) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] === value) return true;
+    }
+    return false;
+}
+
 var startpointOptions = {
     isSource:true,
     endpoint: ["Dot", {radius:7}],
@@ -22,6 +29,12 @@ endpointOptions.isSource = false;
 endpointOptions.isTarget = true;
 
 function buildRecursiveAddToBody(dialogue) {
+    var foundNode = dialogueNodes["dialogue-node-" + dialogue.id];
+
+    if(foundNode) {
+        return foundNode;
+    }
+
     var node = $("<div/>", {
         class: "dialogue-node",
         id: "dialogue-node-" + dialogue.id,
@@ -64,6 +77,43 @@ function buildRecursiveAddToBody(dialogue) {
     return node;
 }
 
+function recursivelyResolveReferences(dialogue) {
+    $.each(dialogue.references, function(key, value) {
+        dialogue.responses.push(findNode(value));
+    });
+
+    dialogue.references = [];
+
+    $.each(dialogue.responses, function(key, value) {
+        recursivelyResolveReferences(value);
+    });
+}
+
+function findNode(id, dialogueNode) {
+    var foundNode;
+
+    if(dialogueNode === undefined) {
+        $.each(dialogueRoot.dialogues, function(key, value) {
+            var found = findNode(id, value);
+            if(found) return foundNode = found;
+        });
+    } else {
+        if(dialogueNode.id === id) {
+            return dialogueNode;
+        } else {
+            $.each(dialogueNode.responses, function(key, value) {
+                var found = findNode(id, value);
+                if(found) return foundNode = found;
+            });
+        }
+    }
+
+    return foundNode;
+}
+
+function resolveReferences() {
+
+}
 
 $(function() {
     // TODO Arrows?
@@ -82,10 +132,11 @@ $(function() {
     //         foldback:1.0
     //     } ],
     // ];
-    $.getJSON("test-dialogue.json", function( data ) {
+    $.getJSON("data.json", function( data ) {
         dialogueRoot = data;
 
          $.each(dialogueRoot.dialogues, function(key, value) {
+             recursivelyResolveReferences(value);
              buildRecursiveAddToBody(value);
          });
     });
@@ -107,6 +158,18 @@ $(function() {
             }
         });
 
+        // TODO: Need to recursively check for connections and otherwise make
+        // a reference instead of a hard connections
+
+        // ... actually we should probably do this on output instead. Makes more
+        // sense to keep the model sensical and make the output conform to it.
+
+        // Will also need to go through "refs" in input.
+
+        // Should actually be easy. Just keep an array of used id's. If it
+        // encounters one already passed, make it a ref and don't add the
+        // responses.
+
         if(!alreadyConnected) {
             sourceNode.dialogue.responses.push(targetNode.dialogue);
         }
@@ -115,11 +178,41 @@ $(function() {
     // TODO Disconnection!
 
     $("#export-json").click(function() {
+        var dialogueExport = jQuery.extend(true, {}, dialogueRoot);
+
+        var passedIDs = [];
+
+        var recursivelyFindLoops = function(dialogue) {
+            passedIDs.push(dialogue.id);
+
+            var toRemove = [];
+
+            $.each(dialogue.responses, function(key, value) {
+                if(inArray(passedIDs, value.id)) {
+                    if(!dialogue.references)
+                        dialogue.references = [];
+
+                    toRemove.push(value);
+                    dialogue.references.push(value.id);
+                } else {
+                    recursivelyFindLoops(value);
+                }
+            });
+
+            $.each(toRemove, function(key, value) {
+                dialogue.responses.splice(dialogue.responses.indexOf(value), 1);
+            });
+        };
+
+        $.each(dialogueExport.dialogues, function(key, value) {
+            recursivelyFindLoops(value);
+        });
+
         $("<a />", {
             "download": "data.json",
-            "href" : "data:application/json," + encodeURIComponent(JSON.stringify(dialogueRoot, null, 2))
+            "href" : "data:application/json," + encodeURIComponent(JSON.stringify(dialogueExport, null, 2))
         }).appendTo("body").click(function() {
              $(this).remove()
-        })[0].click()
+        })[0].click();
     });
 });

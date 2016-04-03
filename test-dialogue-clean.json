@@ -28,9 +28,8 @@
                                 }, {
                                     "id": 4,
                                     "x": 200,
-                                    "y": 400,    
-                                    "text": "Restart.",
-                                    "reference": "#REF,0"
+                                    "y": 400,
+                                    "text": "Restart."
                                 }
                             ]
                         }
@@ -39,8 +38,7 @@
                     "id": 5,
                     "x": 200,
                     "y": 160,
-		            "text": "Go To Not Much",
-		            "reference": "2"
+		            "text": "Go To Not Much"
 		        }
 		    ]
 		}
