@@ -132,7 +132,7 @@ $(function() {
     //         foldback:1.0
     //     } ],
     // ];
-    $.getJSON("data.json", function( data ) {
+    $.getJSON("test-dialogue.json", function( data ) {
         dialogueRoot = data;
 
          $.each(dialogueRoot.dialogues, function(key, value) {
@@ -158,23 +158,19 @@ $(function() {
             }
         });
 
-        // TODO: Need to recursively check for connections and otherwise make
-        // a reference instead of a hard connections
-
-        // ... actually we should probably do this on output instead. Makes more
-        // sense to keep the model sensical and make the output conform to it.
-
-        // Will also need to go through "refs" in input.
-
-        // Should actually be easy. Just keep an array of used id's. If it
-        // encounters one already passed, make it a ref and don't add the
-        // responses.
-
         if(!alreadyConnected) {
             sourceNode.dialogue.responses.push(targetNode.dialogue);
         }
     });
 
+    jsPlumb.bind("connectionDetached", function(info, originalEvent) {
+        if(!originalEvent) return;
+
+        var sourceNode = dialogueNodes[info.sourceId];
+        var targetNode = dialogueNodes[info.targetId];
+
+        sourceNode.dialogue.responses.splice(sourceNode.dialogue.responses.indexOf(targetNode.dialogue), 1);
+    });
     // TODO Disconnection!
 
     $("#export-json").click(function() {

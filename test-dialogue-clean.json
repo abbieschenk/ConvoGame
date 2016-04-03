@@ -38,7 +38,11 @@
                     "id": 5,
                     "x": 200,
                     "y": 160,
-		            "text": "Go To Not Much"
+		            "text": "Go To Not Much",
+					"responses": [],
+					"references": [
+						2
+					]
 		        }
 		    ]
 		}
