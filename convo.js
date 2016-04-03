@@ -1,6 +1,7 @@
 
 var dialogueRoot;
 var idCounter = 0;
+var currentSelection;
 
 var dialogueNodes = [];
 
@@ -73,6 +74,11 @@ function buildRecursiveAddToBody(dialogue) {
     }
 
     dialogueNodes[node.attr("id")] = node;
+
+    node.click(function() {
+        currentSelection = node;
+        $("#node-text").val(dialogue.text);
+    });
 
     return node;
 }
@@ -174,7 +180,13 @@ $(function() {
         // TODO need warning if node will not be exported, i.e. has no parents
     });
 
-    $("#export-json").click(function() {
+    $("#node-text").change(function() {
+        var changedVal = $("#node-text").val();
+        currentSelection.dialogue.text = changedVal;
+        currentSelection.text(changedVal);
+    });
+
+    $("#export-button").click(function() {
         var dialogueExport = jQuery.extend(true, {}, dialogueRoot);
 
         var passedIDs = [];

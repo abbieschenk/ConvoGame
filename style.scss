@@ -24,15 +24,19 @@ body {
     width: 125px;
     cursor: default;
     position: absolute;
-
-//    cursor: move;
-//    cursor: -webkit-grabbing;
-//    cursor: -moz-grabbing;
 }
 
 #convo-editor {
-    left: 500px;
+    float: left;
     width: 500px;
     height: 500px;
     background-color: white;
+}
+
+#node-editor {
+    float: left;
+}
+
+#export-button {
+    clear: both;
 }
