@@ -1,3 +1,15 @@
+/**
+ * TODO
+ * - Response ordering: Number box representing priority.
+ * - Adding new nodes
+ * - Character editing
+ * - Import dialogue
+ * - Delete nodes
+ * - Don't allow connection to self
+ * - Multiple endpoint connections are hard to drag around/remove. Maybe
+ *   have a way to remove connections from the node-editor?
+ *
+ **/
 
 var dialogueRoot;
 var idCounter = 0;
@@ -78,6 +90,8 @@ function buildRecursiveAddToBody(dialogue) {
     node.click(function() {
         currentSelection = node;
         $("#node-text").val(dialogue.text);
+        $("#node-character").val(dialogue.character);
+        $("#node-priority").val(dialogue.priority);
     });
 
     return node;
@@ -184,6 +198,7 @@ $(function() {
         var changedVal = $("#node-text").val();
         currentSelection.dialogue.text = changedVal;
         currentSelection.text(changedVal);
+        jsPlumb.repaintEverything();
     });
 
     $("#export-button").click(function() {

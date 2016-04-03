@@ -26,15 +26,26 @@ body {
     position: absolute;
 }
 
+input[type=text] {
+    width: 80%;
+}
+
+label {
+    display:inline-block;
+    width: 15%;
+}
+
+
 #convo-editor {
     float: left;
-    width: 500px;
+    width: 50%;
     height: 500px;
     background-color: white;
 }
 
 #node-editor {
     float: left;
+    width: 50%;
 }
 
 #export-button {
