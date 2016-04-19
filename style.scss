@@ -51,13 +51,9 @@ label {
     width: 50%;
 }
 
-#export-button {
-    @extend .button;
-    clear: both;
-}
-
 .button {
     @include user-select(none);
+
     cursor: pointer;
     width: 100px;
     border: 1px solid black;
@@ -66,8 +62,4 @@ label {
 
 label {
     @include user-select(none);
-}
-
-#add-button, #delete-button {
-    @extend .button;
 }

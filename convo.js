@@ -258,16 +258,12 @@ $(function() {
     });
 
     $("#delete-button").click(function() {
-
         jsPlumb.detachAllConnections("dialogue-node-" + currentSelection.dialogue.id);
         jsPlumb.removeAllEndpoints("dialogue-node-" + currentSelection.dialogue.id);
         $("#dialogue-node-" + currentSelection.dialogue.id).remove();
-        // $("#" + dialogue-node-" + currentSelection.dialogue.id")
+
         $.each(findParents(currentSelection.dialogue.id), function(key, value) {
-
             value.responses.splice(value.responses.indexOf(currentSelection.dialogue), 1);
-
-            // jsPlumb.disconnect({source: dialogueNodes["dialogue-node-" + value.id].startpoint, target: currentSelection.endpoint});
         })
     });
 
