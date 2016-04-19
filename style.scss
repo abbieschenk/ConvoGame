@@ -18,7 +18,6 @@ body {
 }
 
 .dialogue-node {
-    @include user-select(none);
     border: 3px solid black;
     padding: 5px;
     width: 125px;
@@ -41,6 +40,10 @@ label {
     width: 50%;
     height: 500px;
     background-color: white;
+
+    * {
+        @include user-select(none);
+    }
 }
 
 #node-editor {
@@ -54,12 +57,16 @@ label {
 }
 
 .button {
+    @include user-select(none);
     cursor: pointer;
     width: 100px;
     border: 1px solid black;
     background-color: white;
 }
 
+label {
+    @include user-select(none);
+}
 
 #add-button, #delete-button {
     @extend .button;

@@ -1,9 +1,8 @@
 /**
  * TODO
- * - Adding new nodes
- * - Character editing
- * - Import dialogue
  * - Delete nodes
+ * - Import dialogue
+ * - Character editing
  * - Don't allow connection to self
  * - Multiple endpoint connections are hard to drag around/remove. Maybe
  *   have a way to remove connections from the node-editor?
@@ -164,6 +163,16 @@ $(function() {
          });
     });
 
+
+    jsPlumb.bind("beforeDrop", function(params){
+        if(params.sourceId === params.targetId) {
+            console.log("src: " + params.sourceId + " :: target: " + params.targetId);
+            return false;
+        } else {
+            console.log("src: " + params.sourceId + " :: target: " + params.targetId);
+            return true;
+        }
+    });
 
     jsPlumb.bind("connection", function(info, originalEvent) {
         if(!originalEvent) return;
