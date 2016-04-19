@@ -63,3 +63,7 @@ label {
 label {
     @include user-select(none);
 }
+
+.no-parents {
+    background-color: red;
+}

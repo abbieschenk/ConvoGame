@@ -1,7 +1,9 @@
 /**
  * TODO
- * - Make nodes that won't be saved red and the originator node undeletable
+ * - Make the originator node undeletable
+ * - Make selected node diff color
  * - Import dialogue
+ * - Loops break on export (max call stack exceeded)
  * - Character editing
  * - Multiple endpoint connections are hard to drag around/remove. Maybe
  *   have a way to remove connections from the node-editor?
@@ -152,6 +154,13 @@ function findParents(id) {
     return parents;
 }
 
+function noParentWarning(dialogue) {
+    var parents = findParents(dialogue);
+    if(parents === undefined || parents.length === 0) {
+        $("#dialogue-node-" + dialogue.id).addClass("no-parents");
+    }
+}
+
 $(function() {
     // TODO Arrows?
     //
@@ -207,6 +216,8 @@ $(function() {
 
         if(!alreadyConnected) {
             sourceNode.dialogue.responses.push(targetNode.dialogue);
+
+            targetNode.removeClass("no-parents");
         }
     });
 
@@ -218,7 +229,7 @@ $(function() {
 
         sourceNode.dialogue.responses.splice(sourceNode.dialogue.responses.indexOf(targetNode.dialogue), 1);
 
-        // TODO need warning if node will not be exported, i.e. has no parents
+        noParentWarning(targetNode.dialogue);
     });
 
     $("#node-text").change(function() {
@@ -258,13 +269,22 @@ $(function() {
     });
 
     $("#delete-button").click(function() {
-        jsPlumb.detachAllConnections("dialogue-node-" + currentSelection.dialogue.id);
-        jsPlumb.removeAllEndpoints("dialogue-node-" + currentSelection.dialogue.id);
-        $("#dialogue-node-" + currentSelection.dialogue.id).remove();
+        var toDelete = currentSelection.dialogue;
+        jsPlumb.detachAllConnections("dialogue-node-" + toDelete.id);
+        jsPlumb.removeAllEndpoints("dialogue-node-" + toDelete.id);
+        $("#dialogue-node-" + toDelete.id).remove();
 
-        $.each(findParents(currentSelection.dialogue.id), function(key, value) {
-            value.responses.splice(value.responses.indexOf(currentSelection.dialogue), 1);
+        $.each(findParents(toDelete.id), function(key, value) {
+            value.responses.splice(value.responses.indexOf(toDelete), 1);
         })
+
+        $.each(toDelete.responses, function(key, value) {
+            noParentWarning(value);
+        });
+
+        // TODO Remove current selection
+
+        toDelete.responses = [];
     });
 
     $("#export-button").click(function() {
