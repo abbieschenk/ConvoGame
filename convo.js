@@ -1,6 +1,5 @@
 /**
  * TODO
- * - Response ordering: Number box representing priority.
  * - Adding new nodes
  * - Character editing
  * - Import dialogue
@@ -92,6 +91,7 @@ function buildRecursiveAddToBody(dialogue) {
         $("#node-text").val(dialogue.text);
         $("#node-character").val(dialogue.character);
         $("#node-priority").val(dialogue.priority);
+        $("#node-function").val(dialogue.function);
     });
 
     return node;
@@ -199,6 +199,18 @@ $(function() {
         currentSelection.dialogue.text = changedVal;
         currentSelection.text(changedVal);
         jsPlumb.repaintEverything();
+    });
+
+    $("#node-character").change(function() {
+        currentSelection.dialogue.character = $("#node-character").val();
+    });
+
+    $("#node-priority").change(function() {
+        currentSelection.dialogue.priority = $("#node-priority").val();
+    });
+
+    $("#node-function").change(function() {
+        currentSelection.dialogue.function = $("#node-function").val();
     });
 
     $("#export-button").click(function() {
