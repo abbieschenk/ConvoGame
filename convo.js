@@ -1,6 +1,6 @@
 /**
  * TODO
- * - Delete nodes
+ * - Make nodes that won't be saved red and the originator node undeletable
  * - Import dialogue
  * - Character editing
  * - Multiple endpoint connections are hard to drag around/remove. Maybe
@@ -132,6 +132,26 @@ function findNode(id, dialogueNode) {
     return foundNode;
 }
 
+function findParents(id) {
+    var parents = [];
+
+    function _findParents(searchNode) {
+        $.each(searchNode.responses, function(key, value) {
+            if(value.id === id) {
+                parents.push(searchNode);
+            }
+
+            _findParents(value);
+        });
+    };
+
+    $.each(dialogueRoot.dialogues, function(key, value) {
+        _findParents(value);
+    });
+
+    return parents;
+}
+
 $(function() {
     // TODO Arrows?
     //
@@ -239,6 +259,16 @@ $(function() {
 
     $("#delete-button").click(function() {
 
+        jsPlumb.detachAllConnections("dialogue-node-" + currentSelection.dialogue.id);
+        jsPlumb.removeAllEndpoints("dialogue-node-" + currentSelection.dialogue.id);
+        $("#dialogue-node-" + currentSelection.dialogue.id).remove();
+        // $("#" + dialogue-node-" + currentSelection.dialogue.id")
+        $.each(findParents(currentSelection.dialogue.id), function(key, value) {
+
+            value.responses.splice(value.responses.indexOf(currentSelection.dialogue), 1);
+
+            // jsPlumb.disconnect({source: dialogueNodes["dialogue-node-" + value.id].startpoint, target: currentSelection.endpoint});
+        })
     });
 
     $("#export-button").click(function() {
