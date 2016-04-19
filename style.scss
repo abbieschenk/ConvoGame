@@ -49,5 +49,18 @@ label {
 }
 
 #export-button {
+    @extend .button;
     clear: both;
+}
+
+.button {
+    cursor: pointer;
+    width: 100px;
+    border: 1px solid black;
+    background-color: white;
+}
+
+
+#add-button, #delete-button {
+    @extend .button;
 }

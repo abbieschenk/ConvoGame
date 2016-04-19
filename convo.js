@@ -7,7 +7,6 @@
  * - Don't allow connection to self
  * - Multiple endpoint connections are hard to drag around/remove. Maybe
  *   have a way to remove connections from the node-editor?
- *
  **/
 
 var dialogueRoot;
@@ -45,6 +44,10 @@ function buildRecursiveAddToBody(dialogue) {
 
     if(foundNode) {
         return foundNode;
+    }
+
+    if(idCounter < dialogue.id) {
+        idCounter = dialogue.id + 1;
     }
 
     var node = $("<div/>", {
@@ -211,6 +214,25 @@ $(function() {
 
     $("#node-function").change(function() {
         currentSelection.dialogue.function = $("#node-function").val();
+    });
+
+    $("#add-button").click(function() {
+        var newDialogue = {
+            text: "New Child",
+            x: currentSelection.dialogue.x + (Math.floor(Math.random() * 201) - 100),
+            y: currentSelection.dialogue.y + 100,
+            id: idCounter++,
+        };
+
+        currentSelection.dialogue.responses.push(newDialogue);
+
+        var newNode = buildRecursiveAddToBody(newDialogue);
+
+        setTimeout(function(){
+            jsPlumb.connect({source: currentSelection.startpoint, target: newNode.endpoint});
+
+        });
+        // jsPlumb.connect({ uuids:[currentSelection.startpoint.getUuid(), newNode.endpoint.getUuid()]})
     });
 
     $("#export-button").click(function() {
