@@ -3,7 +3,6 @@
  * - Delete nodes
  * - Import dialogue
  * - Character editing
- * - Don't allow connection to self
  * - Multiple endpoint connections are hard to drag around/remove. Maybe
  *   have a way to remove connections from the node-editor?
  **/
@@ -99,7 +98,7 @@ function buildRecursiveAddToBody(dialogue) {
     return node;
 }
 
-function recursivelyResolveReferences(dialogue) {
+function resolveReferences(dialogue) {
     $.each(dialogue.references, function(key, value) {
         dialogue.responses.push(findNode(value));
     });
@@ -107,7 +106,7 @@ function recursivelyResolveReferences(dialogue) {
     dialogue.references = [];
 
     $.each(dialogue.responses, function(key, value) {
-        recursivelyResolveReferences(value);
+        resolveReferences(value);
     });
 }
 
@@ -133,10 +132,6 @@ function findNode(id, dialogueNode) {
     return foundNode;
 }
 
-function resolveReferences() {
-
-}
-
 $(function() {
     // TODO Arrows?
     //
@@ -158,7 +153,7 @@ $(function() {
         dialogueRoot = data;
 
          $.each(dialogueRoot.dialogues, function(key, value) {
-             recursivelyResolveReferences(value);
+             resolveReferences(value);
              buildRecursiveAddToBody(value);
          });
     });
@@ -239,9 +234,11 @@ $(function() {
 
         setTimeout(function(){
             jsPlumb.connect({source: currentSelection.startpoint, target: newNode.endpoint});
-
         });
-        // jsPlumb.connect({ uuids:[currentSelection.startpoint.getUuid(), newNode.endpoint.getUuid()]})
+    });
+
+    $("#delete-button").click(function() {
+
     });
 
     $("#export-button").click(function() {
