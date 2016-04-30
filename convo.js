@@ -2,7 +2,6 @@
  * TODO
  * - Make the originator node undeletable
  * - Make selected node diff color
- * - Import dialogue
  * - Loops break on export (max call stack exceeded)
  * - Character editing
  * - Multiple endpoint connections are hard to drag around/remove. Maybe
@@ -10,10 +9,9 @@
  **/
 
 var dialogueRoot;
-var idCounter = 0;
+var idCounter;
 var currentSelection;
-
-var dialogueNodes = [];
+var dialogueNodes;
 
 function inArray(array, value) {
     for (var i = 0; i < array.length; i++) {
@@ -161,7 +159,20 @@ function noParentWarning(dialogue) {
     }
 }
 
-$(function() {
+function loadData(jsonData) {
+    dialogueRoot = jsonData;
+
+    $.each(dialogueRoot.dialogues, function(key, value) {
+         resolveReferences(value);
+         buildRecursiveAddToBody(value);
+     });
+
+     jsPlumb.repaintEverything();
+}
+
+
+
+function convo(jsonData) {
     // TODO Arrows?
     //
     // jsPlumb.Defaults.Overlays = [
@@ -178,15 +189,20 @@ $(function() {
     //         foldback:1.0
     //     } ],
     // ];
-    $.getJSON("test-dialogue.json", function( data ) {
-        dialogueRoot = data;
 
-         $.each(dialogueRoot.dialogues, function(key, value) {
-             resolveReferences(value);
-             buildRecursiveAddToBody(value);
-         });
-    });
+    $("#convo-editor").empty();
 
+
+    idCounter = 0;
+    dialogueNodes = [];
+
+    if(!jsonData) {
+        $.getJSON("test-dialogue.json", function( data ) {
+            loadData(data);
+        });
+    } else {
+        loadData(jsonData);
+    }
 
     jsPlumb.bind("beforeDrop", function(params){
         if(params.sourceId === params.targetId) {
@@ -231,6 +247,10 @@ $(function() {
 
         noParentWarning(targetNode.dialogue);
     });
+}
+
+$(function() {
+    convo();
 
     $("#node-text").change(function() {
         var changedVal = $("#node-text").val();
@@ -259,6 +279,7 @@ $(function() {
             id: idCounter++,
         };
 
+        console.log(newDialogue);
         currentSelection.dialogue.responses.push(newDialogue);
 
         var newNode = buildRecursiveAddToBody(newDialogue);
@@ -285,6 +306,39 @@ $(function() {
         // TODO Remove current selection
 
         toDelete.responses = [];
+    });
+
+    $("#import-button").click(function() {
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            var importFiles = document.getElementById("import-file").files;
+
+            if(!importFiles) {
+                alert("No import file selected.");
+                return;
+            }
+
+            var importFile = importFiles[0];
+
+            if(!importFile.type.match('application/json')) {
+                alert("Not a JSON file!");
+                return;
+            }
+
+            var reader = new FileReader();
+
+            reader.onloadend = function(e) {
+                var result = JSON.parse(this.result);
+
+                jsPlumb.reset();
+                setTimeout(function () {
+                    convo(result);
+                });
+            };
+
+            reader.readAsText(importFile);
+        } else {
+          alert('The File APIs are not fully supported in this browser.');
+        }
     });
 
     $("#export-button").click(function() {
