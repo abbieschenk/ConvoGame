@@ -1,5 +1,6 @@
 /**
  * TODO
+ * - Have to hit enter when changing a value but should not have to
  * - Make the originator node undeletable
  * - Make selected node diff color
  * - Loops break on export (max call stack exceeded)
@@ -93,6 +94,7 @@ function buildRecursiveAddToBody(dialogue) {
         $("#node-character").val(dialogue.character);
         $("#node-priority").val(dialogue.priority);
         $("#node-flag").val(dialogue.flag);
+        $("#node-toggle-flag").val(dialogue.toggleFlag);
     });
 
     return node;
@@ -269,6 +271,10 @@ $(function() {
 
     $("#node-flag").change(function() {
         currentSelection.dialogue.flag = $("#node-flag").val();
+    });
+
+    $("#node-toggle-flag").change(function() {
+        currentSelection.dialogue.toggleFlag = $("#node-toggle-flag").val();
     });
 
     $("#add-button").click(function() {
