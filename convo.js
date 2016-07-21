@@ -92,7 +92,7 @@ function buildRecursiveAddToBody(dialogue) {
         $("#node-text").val(dialogue.text);
         $("#node-character").val(dialogue.character);
         $("#node-priority").val(dialogue.priority);
-        $("#node-function").val(dialogue.function);
+        $("#node-flag").val(dialogue.flag);
     });
 
     return node;
@@ -267,8 +267,8 @@ $(function() {
         currentSelection.dialogue.priority = $("#node-priority").val();
     });
 
-    $("#node-function").change(function() {
-        currentSelection.dialogue.function = $("#node-function").val();
+    $("#node-flag").change(function() {
+        currentSelection.dialogue.flag = $("#node-flag").val();
     });
 
     $("#add-button").click(function() {
