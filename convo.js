@@ -14,22 +14,17 @@ var idCounter;
 var currentSelection;
 var dialogueNodes;
 
-function inArray(array, value) {
-    for (var i = 0; i < array.length; i++) {
-        if (array[i] === value) return true;
-    }
-    return false;
-}
-
 var startpointOptions = {
     isSource:true,
     endpoint: ["Dot", {radius:7}],
     connector: ["Flowchart"],
     connectorStyle: {
         strokeStyle: "black",
-        lineWidth: 3,
+        lineWidth: 1,
     }, paintStyle: {
-        fillStyle:"black"
+        fillStyle:"black",
+        strokeStyle:"white",
+        lineWidth:2
     }, maxConnections: 999999
 };
 
@@ -37,6 +32,23 @@ var endpointOptions = Object.create(startpointOptions);
 
 endpointOptions.isSource = false;
 endpointOptions.isTarget = true;
+
+jsPlumb.Defaults.Overlays = [
+    [ "Arrow", {
+        location:1,
+        width: 14,
+        length:14,
+        foldback:1.0,
+        paintStyle: {fillStyle: "white"},
+    } ]
+];
+
+function inArray(array, value) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] === value) return true;
+    }
+    return false;
+}
 
 function buildRecursiveAddToBody(dialogue) {
     var foundNode = dialogueNodes["dialogue-node-" + dialogue.id];
@@ -93,8 +105,8 @@ function buildRecursiveAddToBody(dialogue) {
         $("#node-text").val(dialogue.text);
         $("#node-character").val(dialogue.character);
         $("#node-priority").val(dialogue.priority);
-        $("#node-flag").val(dialogue.flag);
-        $("#node-toggle-flag").val(dialogue.toggleFlag);
+        $("#node-show-if").val(dialogue.showIf);
+        $("#node-on-complete").val(dialogue.onComplete);
     });
 
     return node;
@@ -175,25 +187,7 @@ function loadData(jsonData) {
 
 
 function convo(jsonData) {
-    // TODO Arrows?
-    //
-    // jsPlumb.Defaults.Overlays = [
-    //     [ "Arrow", {
-    //         location:1,
-    //         id:"arrow",
-    //         length:14,
-    //         foldback:1.0
-    //     } ],
-    //     [ "Arrow", {
-    //         location:2,
-    //         id:"arrow-2",
-    //         length:14,
-    //         foldback:1.0
-    //     } ],
-    // ];
-
     $("#convo-editor").empty();
-
 
     idCounter = 0;
     dialogueNodes = [];
@@ -208,10 +202,8 @@ function convo(jsonData) {
 
     jsPlumb.bind("beforeDrop", function(params){
         if(params.sourceId === params.targetId) {
-            console.log("src: " + params.sourceId + " :: target: " + params.targetId);
             return false;
         } else {
-            console.log("src: " + params.sourceId + " :: target: " + params.targetId);
             return true;
         }
     });
@@ -269,12 +261,12 @@ $(function() {
         currentSelection.dialogue.priority = $("#node-priority").val();
     });
 
-    $("#node-flag").change(function() {
-        currentSelection.dialogue.flag = $("#node-flag").val();
+    $("#node-show-if").change(function() {
+        currentSelection.dialogue.showIf = $("#node-show-if").val();
     });
 
-    $("#node-toggle-flag").change(function() {
-        currentSelection.dialogue.toggleFlag = $("#node-toggle-flag").val();
+    $("#node-on-complete").change(function() {
+        currentSelection.dialogue.onComplete = $("#node-on-complete").val();
     });
 
     $("#add-button").click(function() {
@@ -380,7 +372,7 @@ $(function() {
 
         $("<a />", {
             "download": "data.json",
-            "href" : "data:application/json," + encodeURIComponent(JSON.stringify(dialogueExport, null, 2))
+            "href" : "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dialogueExport, null, 2))
         }).appendTo("body").click(function() {
              $(this).remove()
         })[0].click();
