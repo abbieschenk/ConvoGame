@@ -1,8 +1,5 @@
 /**
  * TODO
- * - Have to hit enter when changing a value but should not have to
- * - Make the originator node undeletable
- * - Make selected node diff color
  * - Loops break on export (max call stack exceeded)
  * - Character editing
  * - Multiple endpoint connections are hard to drag around/remove. Maybe
@@ -20,7 +17,7 @@ var startpointOptions = {
     connector: ["Flowchart"],
     connectorStyle: {
         strokeStyle: "black",
-        lineWidth: 1,
+        lineWidth: 2,
     }, paintStyle: {
         fillStyle:"black",
         strokeStyle:"white",
@@ -36,10 +33,10 @@ endpointOptions.isTarget = true;
 jsPlumb.Defaults.Overlays = [
     [ "Arrow", {
         location:1,
-        width: 14,
+        width: 16,
         length:14,
         foldback:1.0,
-        paintStyle: {fillStyle: "white"},
+        cssClass: 'arrow-overlay',
     } ]
 ];
 
@@ -101,12 +98,28 @@ function buildRecursiveAddToBody(dialogue) {
     dialogueNodes[node.attr("id")] = node;
 
     node.click(function() {
+
+        $("#editor-buttons").show();
+        $("#editor-text").hide();
+
+        if(currentSelection) {
+            currentSelection.removeClass("selected");
+        }
+        node.addClass("selected");
+
+        if(dialogueRoot.dialogues.indexOf(dialogue) >= 0) {
+            $("#delete-button").hide();
+        } else {
+            $("#delete-button").show();
+        }
+
         currentSelection = node;
         $("#node-text").val(dialogue.text);
         $("#node-character").val(dialogue.character);
         $("#node-priority").val(dialogue.priority);
-        $("#node-show-if").val(dialogue.showIf);
-        $("#node-on-complete").val(dialogue.onComplete);
+        $("#node-show-if").val(dialogue.flag);
+        $("#node-on-complete-quest").val(dialogue.toggleFlag);
+        $("#node-on-complete-function").val(dialogue.onCompleteFunction);
     });
 
     return node;
@@ -167,7 +180,7 @@ function findParents(id) {
 }
 
 function noParentWarning(dialogue) {
-    var parents = findParents(dialogue);
+    var parents = findParents(dialogue.id);
     if(parents === undefined || parents.length === 0) {
         $("#dialogue-node-" + dialogue.id).addClass("no-parents");
     }
@@ -246,27 +259,31 @@ function convo(jsonData) {
 $(function() {
     convo();
 
-    $("#node-text").change(function() {
+    $("#node-text").on('change keyup paste', function() {
         var changedVal = $("#node-text").val();
         currentSelection.dialogue.text = changedVal;
         currentSelection.text(changedVal);
         jsPlumb.repaintEverything();
     });
 
-    $("#node-character").change(function() {
+    $("#node-character").on('change keyup paste', function() {
         currentSelection.dialogue.character = $("#node-character").val();
     });
 
-    $("#node-priority").change(function() {
+    $("#node-priority").on('change keyup paste', function() {
         currentSelection.dialogue.priority = $("#node-priority").val();
     });
 
-    $("#node-show-if").change(function() {
-        currentSelection.dialogue.showIf = $("#node-show-if").val();
+    $("#node-show-if").on('change keyup paste', function() {
+        currentSelection.dialogue.flag = $("#node-show-if").val();
     });
 
-    $("#node-on-complete").change(function() {
-        currentSelection.dialogue.onComplete = $("#node-on-complete").val();
+    $("#node-on-complete-quest").on('change keyup paste', function() {
+        currentSelection.dialogue.toggleFlag = $("#node-on-complete-quest").val();
+    });
+
+    $("#node-on-complete-function").on('change keyup paste', function() {
+        currentSelection.dialogue.onCompleteFunction = $("#node-on-complete-function").val();
     });
 
     $("#add-button").click(function() {
@@ -301,7 +318,8 @@ $(function() {
             noParentWarning(value);
         });
 
-        // TODO Remove current selection
+        $("#editor-buttons").hide();
+        $("#editor-text").show();
 
         toDelete.responses = [];
     });

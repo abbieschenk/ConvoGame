@@ -3,32 +3,32 @@
 		{
             "id": 0,
             "x": 100,
-            "y": 10,
+            "y": 40,
 		    "text": "*Yawn* Long day of poking around all these boxes. Time for some noms and a nap.",
 		    "character": "Truffle",
 		    "responses": [
                 {
                     "id": 1,
                     "x": 50,
-                    "y": 160,
+                    "y": 220,
 		            "text": "What's up?",
 		            "responses": [
                         {
                             "id": 2,
                             "x": 50,
-                            "y": 280,
+                            "y": 320,
                             "text": "Not much.",
                             "character": "Truffle",
                             "responses": [
                                 {
                                     "id": 3,
                                     "x": 0,
-                                    "y": 400,
+                                    "y": 420,
                                     "text": "Ok, bye."
                                 }, {
                                     "id": 4,
                                     "x": 200,
-                                    "y": 400,
+                                    "y": 420,
                                     "text": "Restart."
                                 }
                             ]
@@ -37,7 +37,7 @@
 		        }, {
                     "id": 5,
                     "x": 200,
-                    "y": 160,
+                    "y": 220,
 		            "text": "Go To Not Much",
 					"responses": [],
 					"references": [

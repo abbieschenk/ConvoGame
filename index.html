@@ -12,31 +12,50 @@
         <script src="convo.js"></script>
     </head>
     <body>
+        <div class="header">CONVOGAME</div>
         <div id="convo-editor"></div>
         <div id="node-editor">
-            <div>
-                <label for:"node-text">Text</label><input id="node-text" type="text" name="node-text"></input>
+            <div id="editor-text">
+                Select a node!
             </div>
-            <div>
-                <label for:"node-character">Character</label><input id="node-character" type="text" name="node-character"></input>
+            <div id="editor-buttons">
+                <div>
+                    <label for="node-text" title="The dialogue text to show">Text</label>
+                    <!--<input id="node-text" type="text" class="textarea" name="node-text"></input>-->
+                    <textarea id="node-text" name="node-text" cols="40" rows="5"></textarea>
+                </div>
+                <div>
+                    <label for="node-character" title="The character's name. Must match character name in game engine.">Character</label>
+                    <input id="node-character" type="text" name="node-character"></input>
+                </div>
+                <div>
+                    <label for="node-priority" title="If there are two choices, the node with the higher priority should fire by default unless it is disabled.">Priority</label>
+                    <input id="node-priority" type="number" name="node-priority" placeholder="0"></input>
+                </div>
+                <div>
+                    <label for="node-show-if" title="Only show this if the current quest is active, in the format QuestName#Stage, e.g. CatFetch#0">ShowIf</label>
+                    <input id="node-show-if" type="text" name="node-show-if"></input>
+                </div>
+                <div>
+                    <label for="node-on-complete-quest" title="Finish the quest up to the specified stage on completing this dialogue point, in the same format as ShowIf.">OnCompleteQuest</label>
+                    <input id="node-on-complete-quest" type="text" name="node-on-complete-quest"></input>
+                </div>
+                <div>
+                    <label for="node-on-complete-function" title="Fire the named function on completing this dialogue point. Can include multiple, comma-separated function names. If they require parameters, make them in the format Function#Paramter1#Parameter2#Etc">OnCompleteFunction</label>
+                    <input id="node-on-complete-function" type="text" name="node-on-complete-function"></input>
+                </div>
+                <div class="separator"></div>
+                <div class="button-panel">
+                    <div class="button" id="add-button">Add Child</div>
+                    <div class="button" id="delete-button">Delete</div>
+                    <div class="separator"></div>
+                    <div>
+                        <input type="file" id="import-file" accept=".json">
+                        <span class="button" id="import-button">Import</span>
+                    </div>
+                    <div class="button" id="export-button">Export</div>
+                </div>
             </div>
-            <div>
-                <label for:"node-priority">Priority</label><input id="node-priority" type="number" name="node-priority" placeholder="0"></input>
-            </div>
-            <div>
-                <label for:"node-show-if">ShowIf</label><input id="node-flag" type="text" name="node-flag"></input>
-            </div>
-            <div>
-                <label for:"node-on-complete">OnComplete</label><input id="node-toggle-flag" type="text" name="node-toggle-flag"></input>
-            </div>
-            <div class="button" id="add-button">Add Child</div>
-            <div class="button" id="delete-button">Delete</div>
-            <div class="separator"></div>
-            <div>
-                <input type="file" id="import-file" accept=".json">
-                <span class="button" id="import-button">Import</span>
-            </div>
-            <div class="button" id="export-button">Export</div>
         </div>
     </body>
 </html>
